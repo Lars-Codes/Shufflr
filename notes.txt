@@ -1,0 +1,102 @@
+Node.js is a runtime environment. Node.js runs the V8 JavaScript engine. This is what powers 
+Google Chrome. Takes our JavaScript and executes it while using Chrome. 
+
+When you download Node, npm is automatically installed wth it. 
+Npm is Node package Manager. It's an online repo for the publishing of open source Node.js 
+projects. It's also a command line utility for interacting with the repo, aids in package 
+installation, and version and dependency management.
+
+To install a library or package with npm, write: 
+npm install LibraryWantToInstall
+
+Once installed, you can write require(library) in the file you'd like to use the library in. 
+
+For dependencies in package.json, you can run npm install from the project root and npm will 
+install all the dependencies listed in package.json. 
+
+node_modules will be installed that will contain all of the project dependencies specified in 
+package.json. 
+
+Package.json: Holds metadata relevant to the project. Used to give info to npm that allows it 
+to identify the project and handle the project's dependencies. Also contains description, version,
+license info, etc. 
+
+When someone installs your project with npm, all the dependencies listed in the json file will
+be installed as well. If someone runs npm install in the root directory of your project, it will
+install all the depencences to node_modules. 
+
+devDependencies are depencences not required for normal operation, but recommended if u want to 
+patch/modify a project. Ex. we will be using nodemon to automatically restart node app
+when file changes r detected. 
+
+To install a dev dependency, write:
+npm install <package-name> --save-dev 
+
+Express is a flexible node.js web app framework 
+
+Starting web app: 
+-Folder: public with HTML file 
+-In terminal: npm init and follow instructions
+-Will open a json file 
+-npm install express. Should now be listed as a dependency in json 
+-Will use nodemon - will restart our app every time a change is made after saving so it will be 
+reflected automatically (kinda like a live server but for backend.)
+-npm install nodemon --save-dev
+- add this:     "dev": "nodemon index.js",
+under "scripts" above "test" in index.js 
+-npm run dev to start server
+
+Now, node_modules and package-lock.json were created. 
+node_modules is a folder used to save all the packages from npm in your computer for the js project 
+you have. 
+
+package-lock.json keeps track of the exact version of every package that is installed so that a 
+project is 100% reproductable in every way. 
+
+Next: 
+-index.js file create 
+-Create a folder called server, and in there put "models" and "routes" (or just routes if no DB)
+
+-in routes/myroutes.js: 
+const express = require('express'); (allows us to use express)
+const router = express.Router(); (allows us to execute express)
+<<functions>>
+module.exports = router; 
+
+-in index.js: 
+
+const express = require('express'); 
+const app = express(); 
+
+const myRoutes = require("./server/routes/myroutes"); //gives us access to all of our routes in myroutes
+app.use("/test", myRoutes); //What we will call on our front end when using fetch and making http requests
+
+// app.use(express.json()); 
+
+const PORT = process.env.PORT || 3000; //A communication endpoint. Can be accessed 
+// through http://localhost:3000. 
+
+//Starts our server 
+app.listen(PORT, () => console.log(`Server started on port ${PORT}!`));
+
+-Need to add CORS: 
+-Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism that allows a 
+server to indicate any origins (domain, scheme, or port) other than its own from which 
+a browser should permit loading resources. 
+-For security reasons, browsers restrict cross-origin HTTP requests initiated from scripts. Add to 
+index.js: 
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*"); 
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+    res.header("Access-Control-Allow-Headers", "GET, POST, PUT, DELETE, OPTIONS"); 
+    next(); 
+})
+
+app.use("/test", myRoutes); //What we will call on our front end when using fetch and making http requests
+
+app.get('*', function(req, res) {
+    res.sendFile(path.resolve(__dirname, 'public', 'index.html'))
+});
+
+-Frontend main.js: 
