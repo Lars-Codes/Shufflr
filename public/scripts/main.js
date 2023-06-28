@@ -1,5 +1,3 @@
-// let accessToken = null;
-
 function populateUI() {
     fetch('http://localhost:5173/data') //Gets access token 
         .then(res => res.text())
