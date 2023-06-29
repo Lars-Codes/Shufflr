@@ -100,3 +100,28 @@ app.get('*', function(req, res) {
 });
 
 -Frontend main.js: 
+
+                // for(const albums of albumList){ //Note: for.. in loops are used to iterate over object properties, not recommended for arrays. 
+                //     console.log(albums.album.name);
+                // }
+
+Setting up mysql: make sure to see what shell ur using if u should use a bash profile or zshrc for ur path  
+To access mysql: 
+mysql -u root -p 
+password is e...
+
+npm install dotenv (password for mysql connection)
+
+Create .env file 
+
+require('dotenv).config() at top of index.js 
+
+Whenever we want to use an environment variable, add process.env.variableName. 
+Ex. 
+const con = mysql.createConnection({
+    host: "localhost"
+    user: process.env.MYSQL_USERNAME, 
+    password: process.env.MYSQL_PSWD
+})
+
+Now: npm install mysql2 (installs mysql driver to project)

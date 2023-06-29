@@ -1,17 +1,23 @@
-
-const express = require("express")
-const axios = require('axios')
+require('dotenv').config(); 
+const con = require('./db_connect.js');
+const express = require("express");
+const axios = require('axios');
 const cors = require("cors");
 const crypto = require('crypto');
-const app = express()
+const mysql = require('mysql2');
+const app = express();
+
 app.use(cors())
-CLIENT_ID = 
-CLIENT_SECRET = 
+CLIENT_ID = "e59aac954fc940f79bd8f4b5fb78ad9a"
+CLIENT_SECRET = "59bb8fc74ece445ab78d608efdd21016"
 PORT = 5173 
 REDIRECT_URI = `http://localhost:5173/callback`
 SCOPE = [
-    "user-read-email",
-    "playlist-read-collaborative"
+    "playlist-read-collaborative",
+    "playlist-read-private", 
+    "playlist-modify-private", 
+    "playlist-modify-public",
+    "user-library-read"
 ]
 
 let accessToken = null;
@@ -80,7 +86,7 @@ app.get("/callback", async (request, response) => {
         })
         .then(resp1 => {
             setAccessToken(resp1.data.access_token);
-            console.log(resp1.data.access_token)
+            // console.log(resp1.data.access_token)
             return response.redirect("/");
         });
     })
@@ -108,6 +114,23 @@ app.get("/callback", async (request, response) => {
         return accessToken; 
     }
 
+    // Get mysql route - returns con (sql pool) from db_connect 
+    app.get('/connect', (req, res) => {
+        const { config } = con;
+        const connectionConfig = { ...config.connectionConfig }; // Copy the connection config object
+        // Exclude circular references
+        delete connectionConfig.pool;
+        const responseObj = {
+          host: config.host,
+          user: config.user,
+          database: config.database,
+          connectionConfig,
+        };
+      
+        console.log('Connected to the database');
+        res.json(responseObj);
+    });
+    
 
 console.log('Listening on 5173');
 app.listen(5173);
