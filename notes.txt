@@ -125,3 +125,22 @@ const con = mysql.createConnection({
 })
 
 Now: npm install mysql2 (installs mysql driver to project)
+
+        // console.log(albumList)
+        // for(const album of albumList)
+        // console.log(album);
+        //upsert allows mongodb to add a new one if it doesnt exist 
+        // Set is the update operation to perform to specify new values to set in the document. Values to set 
+        // are in the curly braces. 
+        // The reduce keyword: takes two arguments. (accumulator, value). The represents each item in the array. Ex. 
+/*
+        const sum = numbers.reduce(function (sum, number) {
+            const updatedSum = sum + number;
+            return updatedSum;
+        }, 0);
+
+*/ // The 0 at the end is what we are accumulating the values INTO. So, in this code, we are accumulating the albumName: null into a JavaScript object {}. 
+// The three dots are called a spread operator. It allows you to deconstruct an array or object into separate values. What this does is 
+// it creates a new object that contains all of the properties from the existing obj accumulator plus the new one. Makes a copy plus one. Otherwise 
+// it would keep replacing it every time. Can use spread notation to make a copy of an array or to add to a preexisting array,
+// Ex: let desserts2 = ['icecream', 'flan', ...desserts, 'frozen yoghurt']; would add all of the values from desserts in that location.
