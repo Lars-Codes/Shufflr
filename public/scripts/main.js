@@ -88,7 +88,7 @@ async function fetchAlbumList(token) {
         data = await result.json();
         albums = data.items.map(ob => ob.album.id);
     }
-
+    //Adding album as key 
     fetchData(token)
         .then((profile) => {
             return profile.id;
@@ -99,17 +99,64 @@ async function fetchAlbumList(token) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ albumIds: allAlbums, userId: id  }), // Sending the user ID in the request body 
+                body: JSON.stringify({ albumIds: allAlbums, userId: id }), // Sending the user ID in the request body 
             })
         })
+        .then(() => {
+            return getAlbumTracks(allAlbums);
+        })
+
+    //Sending all albums list to getAlbumTracks to add album tracks to DB 
+
 
     return allAlbums; //returns a list of IDs 
 }
 
 //Parameter is the list of albums. For each album, retrieve the list of tracks
-async function getAlbumTracks(albumList){
+async function getAlbumTracks(albumList) {
     //Must do 50 at a time. 
-    // Send album ID, track list 
+    // Send album ID, track list, userId
+    try {
+        const token = await fetchAccessToken();
+        const profile = await fetchData(token);
+        // console.log(albumList);
+        for(albumId of albumList) {
+            //Code to get track list for an individual album 
+            const limit = 50;
+            let offset = 0;
+            let trackList = [];
+
+            let result =  await fetch(`https://api.spotify.com/v1/albums/${albumId}/tracks?limit=${limit}&offset=${offset}`, {
+                method: 'GET', 
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }); 
+            let data = await result.json(); 
+            let tracks = data.items.map(ob => ob.uri) 
+            //Most likely will not have to go through this loop bc most albums do not have > 50 songs on them 
+            while(tracks.length>0){
+                trackList = trackList.concat(tracks);
+                offset+=limit; 
+                result =  await fetch(`https://api.spotify.com/v1/albums/${albumId}/tracks?limit=${limit}&offset=${offset}`, {
+                    method: 'GET', 
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }); 
+                data = await result.json(); 
+                tracks = data.items.map(ob => ob.uri); 
+            }
+            //Now need to send this track list to the backend for processing 
+            fetch('/addTracksToAlbum', {
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({aid: albumId, tl: trackList, pid: profile.id}),
+            });
+        }
+    } catch (error) {
+        console.error("Error getting album tracks", error);
+    }
 }
 
 
@@ -144,8 +191,8 @@ async function fetchLikedSongs(token) {
 
     fetchData(token)
         .then((profile) => {
-        return profile.id;
-    })
+            return profile.id;
+        })
         .then((id) => {
             return fetch('/addLikedSongs', {
                 method: 'POST',
@@ -230,30 +277,30 @@ function populateUI() {
 //             albumIds = fetchAlbumList(token, profile) //returns a list of URIs 
 //             return albumIds;
 //         })
-    // .then(() => {
-    //     playlist_id = createPlaylist(); 
-    //     return playlist_id; 
-    // })
+// .then(() => {
+//     playlist_id = createPlaylist(); 
+//     return playlist_id; 
+// })
 
-    //Now have a list of album uris. Need a list of tracks based on the album uris. Add to database.
-    // You need a list of playlists you created (Including liked songs) Need a list of tracks based on playlist uris. Add to database. 
-    // Now, combine all of the arrays into 1 array -- one long array of every single song. 
-    // Then create a new playlist. Save the playlist id into a global variable and then: 
-    // From there, pass this array into requestAddToPlaylist using playlist id. 
+//Now have a list of album uris. Need a list of tracks based on the album uris. Add to database.
+// You need a list of playlists you created (Including liked songs) Need a list of tracks based on playlist uris. Add to database. 
+// Now, combine all of the arrays into 1 array -- one long array of every single song. 
+// Then create a new playlist. Save the playlist id into a global variable and then: 
+// From there, pass this array into requestAddToPlaylist using playlist id. 
 
-    //Put all the songs in a database 
+//Put all the songs in a database 
 
-    // You need to write code inside requestAddToPlaylist so it only adds 100 songs at a time.  Can do this with index/offset and a loop. 
+// You need to write code inside requestAddToPlaylist so it only adds 100 songs at a time.  Can do this with index/offset and a loop. 
 
-    // Now you have your all songs playlist. Now you need to write code to remove duplicates that you may 
-    // have encountered. 
+// Now you have your all songs playlist. Now you need to write code to remove duplicates that you may 
+// have encountered. 
 
-    //From here, set a separate mechanism up so that from now on, every time you add a song/album, 
-    // it automatically adds it to your AllSongs playlist. Every time you unlike a song/album, it removes from 
-    // your AllSongs playlist. 
+//From here, set a separate mechanism up so that from now on, every time you add a song/album, 
+// it automatically adds it to your AllSongs playlist. Every time you unlike a song/album, it removes from 
+// your AllSongs playlist. 
 
-    //Make a back/frontend/ 
-    // }
+//Make a back/frontend/ 
+// }
 // }
 
 // Retrieves access token and creates new all-songs playlist. Not sure if I quite need this yet. 

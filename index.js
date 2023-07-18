@@ -98,7 +98,6 @@ app.get("/logout", (request, response) => {
     console.log("about to click...")
     accessToken = null;
     response.redirect("/");
-    console.log(accesToken);
 });
 
 app.get("/data", (request, response) => {
@@ -232,21 +231,28 @@ app.post('/addAlbumAsKey', async (req, res) => {
 
 
 //Check to see if track is in LikedSongs. 
-async function addTracksToAlbum(songUris, albumId){
+app.post('/addTracksToAlbum', async (req, res) => {
     await client.connect();
     const db = client.db(dbName);
-
+    const {aid, tl, pid} = req.body; //retrieving album id, track list, profile id 
     //Checking to see if track is in "songs" list. 
-    for(track of songUris){
-        const trackExists = await songs.findOne({ songs: { $in: [uri] } });
-
-        if(!trackExists){
-            // add track to corresponding album 
-        } // else do nothing 
+    for(track of tl){
+        const trackExistsCursor = await db.collection(pid).find({ songs: { $in: [track] } });
+        const trackExistsArray = await trackExistsCursor.toArray();
+        if (trackExistsArray.length > 0) {
+            console.log(track); // Accessing the first and only element
+          }
+    //    if(trackExists){
+    //     console.log(track);
+    //    }
+        // if(!trackExists){
+        //     db.collection(pid).updateOne(
+        //         {id: [pid]},
+        //         {$addToSet: {[aid]: track}}
+        //     )
+        // } 
     }
-
-    return trackExists; 
-}
+}); 
 
 
 
