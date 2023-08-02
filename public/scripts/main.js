@@ -101,7 +101,7 @@ async function fetchLikedSongs() {
     return allLiked;
 }
 
-async function addToPlaylist(playlistId, profile) {
+async function addToPlaylist(playlistId) {
     try {
         console.log("Adding songs to playlist..")
         let addSongsToPlaylist = await fetch('http://localhost:5173/addSongsToPlaylist', {
@@ -109,7 +109,7 @@ async function addToPlaylist(playlistId, profile) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ playlistid: playlistId, profile_: profile })
+            body: JSON.stringify({ playlistid: playlistId })
         });
     } catch (error) {
         console.error("Error reaching playlist route", error);
@@ -128,13 +128,11 @@ async function createPlaylist() {
                 profileImage.src = profile.images[0].url;
                 document.getElementById("avatar").appendChild(profileImage);
             }
-          //  let playlistId = await fetchPlaylistForCreation(); // Creates playlist, returns playlistid 
+            let playlistId = await fetchPlaylistForCreation(); // Creates playlist, returns playlistid 
 
             await fetchLikedSongs(); // Add liked songs to set 
-            await fetchAlbumList(token); // Get album list 
-
-            await addToPlaylist(playlistId, profile)
-
+            await fetchAlbumList(); // Get album list 
+            await addToPlaylist(playlistId)
             console.log("Success adding to playlist!")
 
         }

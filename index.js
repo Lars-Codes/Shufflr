@@ -129,7 +129,6 @@ app.post('/addLikedSongs', async (req, res) => {
             songSet.add(song);
         }
         console.log("Liked songs added to set successfully.")
-        //    songArrayFromSet = Array.from(songSet); // Converts song set to array when all is said and done 
         res.sendStatus(200); // Sending a success response
     } catch (error) {
         console.error('Error adding liked songs:', error);
@@ -160,6 +159,7 @@ app.post('/fetchAlbumList', async (req, res) => {
             offset += limit;
         } while (albums.length > 0);
         console.log("All songs added to set.");
+        songArrayFromSet = Array.from(songSet); // Converts song set to array when all is said and done 
         res.sendStatus(200);
     } catch (error) {
         console.error("Error fetching albums:", error);
@@ -217,16 +217,45 @@ async function handlePagination(albumId) {
     }
 }
 
+// Route to retrieve playlistID and profile 
 app.post('/addSongsToPlaylist', async (req, res) => {
-    const { playlistid, profile_ } = req.body;
-    // await batchSongs(); 
+    const { playlistid} = req.body;
+    await batchSongs(playlistid);
+    res.sendStatus(200);
 })
 
-async function batchSongs() {
-    const limit = 100;
-    const offset = 0;
-    // console.log("Length: " + songArrayFromSet.length);
-    // return batch; 
+async function sendSongsToPlaylist(songarr, playlistid){
+    const result = await fetch(`https://api.spotify.com/v1/playlists/${playlistid}/tracks`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({"uris": songarr})
+    });
+
+    const data = await result.json();
+    console.log(data); // Log the response data to check for any errors
+}
+
+async function batchSongs(playlistid) {
+    let limit = 100; 
+    let offset = 0; 
+    const songArrayCopy = songArrayFromSet.slice();
+    console.log("Length: " + songArrayFromSet.length);
+    let batch = [];
+    console.log("Total songs to add: " + songArrayFromSet.length);
+    
+    while (offset < songArrayFromSet.length) {
+        const batch = songArrayFromSet.slice(offset, offset + limit); 
+        
+        if (batch.length > 0) {
+            await sendSongsToPlaylist(batch, playlistid);
+            console.log("Batch added: " + batch.length);
+        }
+        
+        offset += limit; 
+    }
 }
 
 
