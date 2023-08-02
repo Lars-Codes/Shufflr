@@ -3,8 +3,6 @@ const express = require("express");
 const axios = require('axios');
 const cors = require("cors");
 const crypto = require('crypto');
-const mongodb = require('mongodb');
-const { client, dbName, connectToMongoDB } = require('./db_connect.js');
 const { connect } = require('http2');
 const fetch = require('cross-fetch');
 
