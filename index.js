@@ -6,13 +6,10 @@ const crypto = require('crypto');
 const { connect } = require('http2');
 const fetch = require('cross-fetch');
 
-
 const app = express();
 app.use(express.json());
 app.use(cors())
 
-CLIENT_ID = "e59aac954fc940f79bd8f4b5fb78ad9a"
-CLIENT_SECRET = "59bb8fc74ece445ab78d608efdd21016"
 PORT = 5173
 REDIRECT_URI = `http://localhost:5173/callback`
 SCOPE = [
@@ -25,8 +22,9 @@ SCOPE = [
 
 let accessToken = null;
 let verifier = null;
-let songSet = new Set();
-let songArrayFromSet = null;
+
+let songSet = new Set(); // Set to hold all songs 
+let songArrayFromSet = null; // Array to send into playlist 100 at a time 
 
 app.use(express.static(__dirname + '/public'))
     .use(cors())
@@ -59,14 +57,15 @@ async function generateCodeChallenge(codeVerifier) {
 }
 //========================================================================================================================
 
+// Redirects to ask user if the app can give access
 app.get("/login", async (request, response) => {
     verifier = generateCodeVerifier(128);
     const challenge = await generateCodeChallenge(verifier);
     const redirect_url = `https://accounts.spotify.com/authorize?response_type=code&client_id=${CLIENT_ID}&scope=${SCOPE}&state=123456&redirect_uri=${REDIRECT_URI}&prompt=consent&code_challenge_method=S256&code_challenge=${challenge}`
     response.redirect(redirect_url);
-
 })
 
+// Returns to callback route with verifier and access token 
 app.get("/callback", async (request, response) => {
     const code = request.query["code"]
     await axios.post(
@@ -90,40 +89,54 @@ app.get("/callback", async (request, response) => {
             }
         })
         .then(resp1 => {
-            setAccessToken(resp1.data.access_token);
-            // console.log(resp1.data.access_token)
+            accessToken = resp1.data.access_token;
+            // setAccessToken(resp1.data.access_token);
             return response.redirect("/");
         });
 })
 
+// Clear the access token and any session data
 app.get("/logout", (request, response) => {
-    // Clear the access token and any session data
-    // console.log("about to click...")
     accessToken = null;
-    response.redirect("/");
+    response.redirect("/"); 
 });
 
-app.get("/data", (request, response) => {
-    if (accessToken) {
-        response.send(accessToken);
-    } else {
-        response.send("Access token not available. Please log in.");
-    }
-});
-
-async function setAccessToken(access) {
-    accessToken = access;
-}
-async function getAccessToken() {
-    return accessToken;
-}
-
-app.post('/addLikedSongs', async (req, res) => {
-    const { likedSongs } = req.body;
-    const songListArr = [...likedSongs]; //Creating copy of array 
-
+app.get('/fetchProfile', async (req, res) => {
     try {
-        for (song of songListArr) {
+        const response = await fetch("https://api.spotify.com/v1/me", {
+            method: "GET",
+            headers: { Authorization: `Bearer ${accessToken}` }
+        })
+        const profile = await response.json();
+        res.send(profile);
+    } catch (error) {
+        throw new Error("Error fetching profile: " + error);
+    }
+})
+
+// function on frontend retrieves liked songs and sends them over here. This adds the songs to the set. 
+app.get('/addLikedSongs', async (req, res) => {
+    try {
+        const limit = 50;
+        let offset = 0;
+        let allLiked = [];
+        let songs = null;
+        do {
+            const result = await fetch(`https://api.spotify.com/v1/me/tracks?limit=${limit}&offset=${offset}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+    
+            const data = await result.json();
+            songs = data.items.map(ob => ob.track).map(ob => ob.uri);
+            allLiked = allLiked.concat(songs);
+            offset += limit;
+    
+        } while (songs.length > 0);
+
+        for (song of allLiked) {
             songSet.add(song);
         }
         console.log("Liked songs added to set successfully.")
@@ -134,6 +147,8 @@ app.post('/addLikedSongs', async (req, res) => {
     }
 });
 
+// Fetches album list. For each batch of 50 albums, sends to function getTracksForEach. 
+// This function adds the songs to a set. 
 app.post('/fetchAlbumList', async (req, res) => {
     const limit = 50;
     let offset = 0;
@@ -165,6 +180,7 @@ app.post('/fetchAlbumList', async (req, res) => {
     }
 });
 
+// Helper function for /fetchAlbumList route. Appends tracks for each batch of 50 albums to set. 
 async function getTracksForEach(data) {
     try {
         console.log("In one batch.");
@@ -188,6 +204,7 @@ async function getTracksForEach(data) {
     }
 }
 
+// If there are >50 tracks in an album, this function deals with that. 
 async function handlePagination(albumId) {
     const limit = 50;
     let offset = 0;
@@ -214,28 +231,30 @@ async function handlePagination(albumId) {
         songSet.add(song);
     }
 }
-
-// Route to retrieve playlistID and profile 
 app.post('/addSongsToPlaylist', async (req, res) => {
-    const { playlistid} = req.body;
-    await batchSongs(playlistid);
-    res.sendStatus(200);
+    const {profileid} = req.body; 
+        try {
+        const response = await fetch(`https://api.spotify.com/v1/users/${profileid}/playlists`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: 'All Songs Playlist',
+                description: 'Includes all liked songs, albums, & playlists created by you. App by @artbylarapalombi on Instagram.'
+            })
+        })
+        const data = await response.json();
+        let playlistid = data.id;
+        await batchSongs(playlistid);
+        res.sendStatus(200);
+    } catch (error) {
+        throw new Error("Error creating playlist: " + error);
+    }
 })
 
-async function sendSongsToPlaylist(songarr, playlistid){
-    const result = await fetch(`https://api.spotify.com/v1/playlists/${playlistid}/tracks`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({"uris": songarr})
-    });
-
-    const data = await result.json();
-    console.log(data); // Log the response data to check for any errors
-}
-
+// Sends songs to playlist in batches. 
 async function batchSongs(playlistid) {
     let limit = 100; 
     let offset = 0; 
@@ -256,8 +275,19 @@ async function batchSongs(playlistid) {
     }
 }
 
+async function sendSongsToPlaylist(songarr, playlistid){
+    const result = await fetch(`https://api.spotify.com/v1/playlists/${playlistid}/tracks`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({"uris": songarr})
+    });
 
-
+    const data = await result.json();
+    console.log(data); // Log the response data to check for any errors
+}
 
 console.log('Listening on 5173');
 app.listen(5173);
