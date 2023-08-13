@@ -5,13 +5,17 @@ const cors = require("cors");
 const crypto = require('crypto');
 const { connect } = require('http2');
 const fetch = require('cross-fetch');
+const cookieParser = require('cookie-parser'); // Storing in a cookie 
 
 const app = express();
 app.use(express.json());
 app.use(cors())
+app.use(cookieParser());
 
+CLIENT_ID = process.env.CLIENT_ID;
+CLIENT_SECRET = process.env.CLIENT_SECRET;
 PORT = 5173
-REDIRECT_URI = `http://localhost:5173/callback`
+REDIRECT_URI = process.env.REDIRECT_URI;
 SCOPE = [
     "playlist-read-collaborative",
     "playlist-read-private",
@@ -20,9 +24,7 @@ SCOPE = [
     "user-library-read"
 ]
 
-let accessToken = null;
 let verifier = null;
-
 let songSet = new Set(); // Set to hold all songs 
 let songArrayFromSet = null; // Array to send into playlist 100 at a time 
 
@@ -33,7 +35,7 @@ app.get("/", (request, response) => {
     response.send("Welcome to my application!"); // or redirect to another route if desired
 });
 
-//PKCE Authorization Code ========================================================================================================================
+//PKCE Authorization Code 
 
 //Code verifier generation 
 function generateCodeVerifier(length) {
@@ -55,7 +57,6 @@ async function generateCodeChallenge(codeVerifier) {
         .replace(/=+$/, '');
     return base64Digest;
 }
-//========================================================================================================================
 
 // Redirects to ask user if the app can give access
 app.get("/login", async (request, response) => {
@@ -68,7 +69,7 @@ app.get("/login", async (request, response) => {
 // Returns to callback route with verifier and access token 
 app.get("/callback", async (request, response) => {
     const code = request.query["code"]
-    await axios.post(
+    let resp1 = await axios.post(
         url = 'https://accounts.spotify.com/api/token',
         data = new URLSearchParams({
             'grant_type': 'authorization_code',
@@ -88,21 +89,25 @@ app.get("/callback", async (request, response) => {
                 password: CLIENT_SECRET
             }
         })
-        .then(resp1 => {
-            accessToken = resp1.data.access_token;
-            // setAccessToken(resp1.data.access_token);
-            return response.redirect("/");
-        });
+    // accessToken = resp1.data.access_token;
+    response.cookie('access_token', resp1.data.access_token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'strict', // Adjust as needed
+        maxAge: 3600000, // Cookie expiration time in milliseconds (e.g., 1 hour)
+    });
+    return response.redirect("home.html");
 })
 
 // Clear the access token and any session data
 app.get("/logout", (request, response) => {
-    accessToken = null;
-    response.redirect("/"); 
+    response.clearCookie("access_token");
+    response.redirect("/");
 });
 
 app.get('/fetchProfile', async (req, res) => {
     try {
+        const accessToken = req.cookies.access_token;
         const response = await fetch("https://api.spotify.com/v1/me", {
             method: "GET",
             headers: { Authorization: `Bearer ${accessToken}` }
@@ -117,10 +122,12 @@ app.get('/fetchProfile', async (req, res) => {
 // function on frontend retrieves liked songs and sends them over here. This adds the songs to the set. 
 app.get('/addLikedSongs', async (req, res) => {
     try {
+        const accessToken = req.cookies.access_token;
         const limit = 50;
         let offset = 0;
         let allLiked = [];
         let songs = null;
+        let i = 0; 
         do {
             const result = await fetch(`https://api.spotify.com/v1/me/tracks?limit=${limit}&offset=${offset}`, {
                 method: 'GET',
@@ -128,12 +135,13 @@ app.get('/addLikedSongs', async (req, res) => {
                     'Authorization': `Bearer ${accessToken}`
                 }
             });
-    
+
             const data = await result.json();
             songs = data.items.map(ob => ob.track).map(ob => ob.uri);
+            let print = data.items.map(ob => ob.track).map(ob => ob.name)[i];
             allLiked = allLiked.concat(songs);
             offset += limit;
-    
+
         } while (songs.length > 0);
 
         for (song of allLiked) {
@@ -147,6 +155,54 @@ app.get('/addLikedSongs', async (req, res) => {
     }
 });
 
+app.get('/fetchPlaylists', async (req, res) => {
+    try {
+        const accessToken = req.cookies.access_token;
+        const limit = 50;
+        let offset = 0;
+        let allplaylists = [];
+        let playlists = null;
+        console.log("Here in the api...")
+        do {
+            const result = await fetch(`https://api.spotify.com/v1/me/playlists?limit=${limit}&offset=${offset}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+            const data = await result.json();
+            playlists = data.items;
+            allplaylists = allplaylists.concat(playlists);
+            offset += limit;
+        } while (playlists.length > 0);
+
+        const playlist = allplaylists.find(item => item.name === "all_songs");
+        const playlistId = playlist ? playlist.id : 0;
+        all_songs = playlistId;
+        res.send(JSON.stringify(playlistId));
+
+    } catch (error) {
+        console.error("Error while searching through playlists", error);
+    }
+})
+
+let all_songs = null;
+app.get('/removePlaylist', async (req, res) => {
+    try {
+        const accessToken = req.cookies.access_token;
+        const unfollow = await fetch(`https://api.spotify.com/v1/playlists/${all_songs}/followers`, {
+            method: 'DELETE', 
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        }); 
+        console.log("Promise fulfilled");
+        res.sendStatus(200);
+    } catch (error) {
+        console.log("Error getting songs from all-songs", error);
+    }
+})
+
 // Fetches album list. For each batch of 50 albums, sends to function getTracksForEach. 
 // This function adds the songs to a set. 
 app.post('/fetchAlbumList', async (req, res) => {
@@ -156,6 +212,7 @@ app.post('/fetchAlbumList', async (req, res) => {
 
     console.log("Fetching album list...");
     try {
+        const accessToken = req.cookies.access_token;
         let albums = null;
         do {
             const result = await fetch(`https://api.spotify.com/v1/me/albums?limit=${limit}&offset=${offset}`, {
@@ -166,7 +223,7 @@ app.post('/fetchAlbumList', async (req, res) => {
                 }
             });
             const data = await result.json();
-            await getTracksForEach(data); // Batch of tracks 
+            await getTracksForEach(data, req); // Batch of tracks 
             albums = data.items.map(ob => ob.album.id);
             allAlbums = allAlbums.concat(albums);
             offset += limit;
@@ -181,7 +238,7 @@ app.post('/fetchAlbumList', async (req, res) => {
 });
 
 // Helper function for /fetchAlbumList route. Appends tracks for each batch of 50 albums to set. 
-async function getTracksForEach(data) {
+async function getTracksForEach(data, req) {
     try {
         console.log("In one batch.");
         let trackBatchTotalTracks = data.items.map(ob => ob.album).map(ob => ob.total_tracks); // Data is an array of 50 album infos. 
@@ -189,7 +246,7 @@ async function getTracksForEach(data) {
         for (let i = 0; i < trackBatchTotalTracks.length; i++) {
             if (trackBatchTotalTracks[i] >= 50) {
                 // Pass ID to another function, handle with pagination  
-                await handlePagination(data.items[i].album.id);
+                await handlePagination(data.items[i].album.id, req);
                 console.log("pagination handled.")
             } else {
                 // Add tracks directly to set 
@@ -205,7 +262,8 @@ async function getTracksForEach(data) {
 }
 
 // If there are >50 tracks in an album, this function deals with that. 
-async function handlePagination(albumId) {
+async function handlePagination(albumId, req) {
+    const accessToken = req.cookies.access_token;
     const limit = 50;
     let offset = 0;
     let trackList = [];
@@ -232,8 +290,9 @@ async function handlePagination(albumId) {
     }
 }
 app.post('/addSongsToPlaylist', async (req, res) => {
-    const {profileid} = req.body; 
-        try {
+    const { profileid } = req.body;
+    try {
+        const accessToken = req.cookies.access_token;
         const response = await fetch(`https://api.spotify.com/v1/users/${profileid}/playlists`, {
             method: 'POST',
             headers: {
@@ -241,13 +300,13 @@ app.post('/addSongsToPlaylist', async (req, res) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                name: 'All Songs Playlist',
+                name: 'all_songs',
                 description: 'Includes all liked songs, albums, & playlists created by you. App by @artbylarapalombi on Instagram.'
             })
         })
         const data = await response.json();
         let playlistid = data.id;
-        await batchSongs(playlistid);
+        await batchSongs(playlistid, req);
         res.sendStatus(200);
     } catch (error) {
         throw new Error("Error creating playlist: " + error);
@@ -255,34 +314,36 @@ app.post('/addSongsToPlaylist', async (req, res) => {
 })
 
 // Sends songs to playlist in batches. 
-async function batchSongs(playlistid) {
-    let limit = 100; 
-    let offset = 0; 
+async function batchSongs(playlistid, req) {
+    let limit = 100;
+    let offset = 0;
     const songArrayCopy = songArrayFromSet.slice();
     console.log("Length: " + songArrayFromSet.length);
     let batch = [];
     console.log("Total songs to add: " + songArrayFromSet.length);
-    
+
     while (offset < songArrayFromSet.length) {
-        const batch = songArrayFromSet.slice(offset, offset + limit); 
-        
+        const batch = songArrayFromSet.slice(offset, offset + limit);
+
         if (batch.length > 0) {
-            await sendSongsToPlaylist(batch, playlistid);
+            await sendSongsToPlaylist(batch, playlistid, req);
             console.log("Batch added: " + batch.length);
         }
-        
-        offset += limit; 
+
+        offset += limit;
     }
 }
 
-async function sendSongsToPlaylist(songarr, playlistid){
+async function sendSongsToPlaylist(songarr, playlistid, req) {
+    console.log("Error here? ")
+    const accessToken = req.cookies.access_token;
     const result = await fetch(`https://api.spotify.com/v1/playlists/${playlistid}/tracks`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({"uris": songarr})
+        body: JSON.stringify({ "uris": songarr })
     });
 
     const data = await result.json();

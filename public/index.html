@@ -5,20 +5,39 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Songs Playlst Generator</title>
+    <title>All Songs Playlist Generator</title>
+    <link rel="stylesheet" type="text/css" href="main.css" />
 </head>
 
 <body>
-    <a href="/login" class="btn btn-primary">Log in with Spotify</a>
-    <a href="/logout" class="btn-logout">Log out of Spotify</a>
 
-    <h1>All Songs Playlist</h1>
+    <div class="heading">
+        <div class="title">
+            <h1>All Songs Playlist Generator</h1>
+        </div>
+        <div class="navbar">
+            <nav><strong><a href="index.html">Home</a> <a href="about.html">About</a> <a
+                        href="privacy.html">Privacy</a><br><br><a href = "shuffler.html">True Random Shuffler Tool</a></strong></nav>
+        </div>
+    </div>
 
-    <section id="profile">
-        <h2>Logged in as <span id="displayName"></span></h2>
-        <span id="avatar"></span>
-            <span id="imgUrl"></span>
-    </section>
+    <div class="container">
+        <div class="left-box">
+            <h3>This app will generate a playlist that contains all of your
+                liked songs plus all songs from your liked albums.
+                You may also use this app to update a preexisting All Songs playlist. Please connect with Spotify to
+                proceed.
+            </h3>
+        </div>
+
+        <div class="right-box">
+            <h3>Log in for the most bountiful playlist experience of your life...</h3>
+            <a href="/login" id="login">
+                <img src="./images/spotify.png" class="small-image">
+            </a>
+        </div>
+    </div>
+
 
     <script src="scripts/main.js"></script>
 </body>
