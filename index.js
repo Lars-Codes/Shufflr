@@ -21,7 +21,8 @@ SCOPE = [
     "playlist-read-private",
     "playlist-modify-private",
     "playlist-modify-public",
-    "user-library-read"
+    "user-library-read",
+    "user-modify-playback-state"
 ]
 
 let verifier = null;
@@ -127,7 +128,7 @@ app.get('/addLikedSongs', async (req, res) => {
         let offset = 0;
         let allLiked = [];
         let songs = null;
-        let i = 0; 
+        let i = 0;
         do {
             const result = await fetch(`https://api.spotify.com/v1/me/tracks?limit=${limit}&offset=${offset}`, {
                 method: 'GET',
@@ -184,18 +185,139 @@ app.get('/fetchPlaylists', async (req, res) => {
     } catch (error) {
         console.error("Error while searching through playlists", error);
     }
+});
+
+let shufflePlaylist = null;
+app.post('/findPlaylistsToShuffle', async (req, res) => {
+    try {
+        const { toFind } = req.body;
+        // Sometimes a user has created a playlist name with a space at the end. Here is where 
+        // we check for those cases. 
+        const trailingSpace = toFind + " ";
+        const startSpace = " " + toFind;
+
+        const accessToken = req.cookies.access_token;
+        const limit = 50;
+        let offset = 0;
+        let allplaylists = [];
+        let playlists = null;
+
+        do {
+            const result = await fetch(`https://api.spotify.com/v1/me/playlists?limit=${limit}&offset=${offset}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+            const data = await result.json();
+            playlists = data.items;
+            allplaylists = allplaylists.concat(playlists);
+            offset += limit;
+        } while (playlists.length > 0);
+
+        let playlist = allplaylists.find(item => item.name === toFind);
+        let playlistId = playlist ? playlist.id : 0;
+
+        if (playlistId == 0) { // Checking for trailing white space on user's end 
+            playlist = allplaylists.find(item => item.name === trailingSpace);
+            playlistId = playlist ? playlist.id : 0;
+        }
+
+        if (playlistId == 0) { // Checking for beginning white space on user's end 
+            playlist = allplaylists.find(item => item.name === startSpace);
+            playlistId = playlist ? playlist.id : 0;
+        }
+
+        if (playlistId != 0) {
+            shufflePlaylist = playlistId;
+        }
+
+        res.send(JSON.stringify(playlistId));
+    } catch (error) {
+        console.error("Error while fetching playlists for shuffling", error)
+    }
 })
+
+// Gets size of playlist 
+app.post('/getSizeOfPlaylist', async (req, res) => {
+    try {
+        const {num} = req.body; 
+        console.log(num);
+        if (shufflePlaylist != null) {
+            const accessToken = req.cookies.access_token;
+            const limit = 50;
+            let offset = 0;
+            let trackList = [];
+
+            let track = null;
+            do {
+                const result = await fetch(`https://api.spotify.com/v1/playlists/${shufflePlaylist}/tracks?limit=${limit}&offset=${offset}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+                const data = await result.json();
+                track = data.items.map(ob => ob.track.uri);
+                trackList = trackList.concat(track);
+                offset += limit;
+            } while (track.length > 0);
+            await randomizePlaylist(trackList, accessToken, num);
+            res.sendStatus(200);
+        }
+    } catch (error) {
+        console.error("Error retrieving size of playlist", error);
+    }
+})
+// Fisher-Yates algorithm to randomize array 
+async function randomizePlaylist(array, token, num) {
+    console.log("Randomizing");
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    await addSongsToQueue(array, token, num);
+}
+
+async function addSongsToQueue(array, token, num) {
+    console.log(array);
+    try {
+        let max = 0; 
+        if(num>array.length){
+            max = array.length; 
+        }else{
+            max = num; 
+        }
+        for (let i = 0; i < max; i++) {
+            let uri = array[i];
+            console.log(uri);
+            let result = await fetch(`https://api.spotify.com/v1/me/player/queue?uri=${uri}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+            console.log("success")
+        }
+    } catch (error) {
+        console.error("Error adding to queue", error);
+    }
+}
+
+
 
 let all_songs = null;
 app.get('/removePlaylist', async (req, res) => {
     try {
         const accessToken = req.cookies.access_token;
         const unfollow = await fetch(`https://api.spotify.com/v1/playlists/${all_songs}/followers`, {
-            method: 'DELETE', 
+            method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
-        }); 
+        });
         console.log("Promise fulfilled");
         res.sendStatus(200);
     } catch (error) {

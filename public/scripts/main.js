@@ -48,7 +48,6 @@ async function addToPlaylist() {
 // For updatePlaylist option 
 async function fetchPlaylists() {
     try {
-        console.log("Retrieving playlists...");
         let result = await fetch('/fetchPlaylists');
         const response = await result.json();
         return response;
@@ -74,14 +73,11 @@ async function displayProfile() {
         if (profile.images[0]) {
             const profileImage = new Image(200, 200);
             profileImage.src = profile.images[0].url;
-            // document.getElementById("avatar").appendChild(profileImage);
             document.getElementById("displayName").innerText = "Logged in as " + profile.display_name;
         } else {
             document.getElementById("displayName").innerText = "access token expired. Please log out and log back in.";
 
         }
-
-        console.log("Success adding to playlist!")
     } catch (error) {
         console.error("Error in createPlaylist:", error);
     }
@@ -90,7 +86,8 @@ displayProfile();
 
 let createActivated = false;
 let updateActivated = false;
-// TO CREATE PLAYLIST 
+
+// // TO CREATE PLAYLIST 
 let createPlaylist = document.getElementById("playlist");
 createPlaylist.addEventListener("click", create);
 
@@ -147,7 +144,6 @@ async function findPlaylist() {
         message(1);
         message(13);
     }
-    console.log("findPlaylist");
 }
 
 async function update() {
@@ -159,27 +155,6 @@ async function update() {
     } else {
     }
 }
-
-let shuffle = document.getElementById("shuffle");
-// shuffle.addEventListener("click", shuffleSongs);
-shuffle.addEventListener("click", function(){
-    console.log("test");
-});
-async function shuffleSongs() {
-    // let exists = await fetchPlaylists();
-    console.log("exists");
-    // if (exists == 0) {
-    //     message(9);
-    //     console.log("test")
-    // } else {
-    //     message(9);
-    //     console.log("test")
-        // Get size of playlist, find random number in that range 
-        // access API to shuffle 
-        // add refresh token 
-    // }
-}
-
 
 function message(code) {
     switch (code) {
@@ -231,8 +206,4 @@ function message(code) {
             document.getElementById("processing").innerHTML = "<iframe src=\"https://openprocessing.org/sketch/1913964/embed/\" width=\"500\" height=\"500\"></iframe>"
             break;
     }
-
 }
-
-
-
