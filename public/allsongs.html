@@ -23,17 +23,29 @@
 
     <div class="indexcontainer">
         <div class="indexbox">
-            <h1 class="displayname" id="displayName">home</h1>
+            <h1 class="displayname" id="displayName">All Songs Playlist</h1>
         </div>
     </div>
 
-    <div class="backgroundchoose">
-        <div class="choose">
-            <a href="shuffler.html"><button class="randomShuffler">Go to Random Shuffler Tool</button></a>
-            <a href="allsongs.html"><button class="randomShuffler">Create/Update All Songs Playlist</button></a>
-        </div>
+    <div class="homecontainer">
+        </h4>
+        <h3 class="status" id="status">
+            Create Or Update Your All Songs Playlist
+        </h3>
+        <span id="imgUrl" class="imgUrl"></span>
+        <div id="loading" class="loading" width=50px></div>
+        <br>
+        <button class="playlist" id="playlist">Create your All Songs playlist!</button>
+        <button class="playlist" id="updateplaylist">Update my preexisting playlist!</button>
+        <em>
+            <div>*If you run into any issues, please log out and log back in.</div>
+        </em>
+        <h4 id="reload" class="reload"></h4>
+        <h5 id="preview" class="preview"></h5>
+        <div class="processing" id="processing"></div>
         <a href="/logout" class="btn-logoutHome">Log out of Spotify</a>
     </div>
+
     <script src="scripts/main.js"></script>
 </body>
 

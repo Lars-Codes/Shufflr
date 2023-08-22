@@ -12,10 +12,7 @@ app.use(express.json());
 app.use(cors())
 app.use(cookieParser());
 
-CLIENT_ID = process.env.CLIENT_ID;
-CLIENT_SECRET = process.env.CLIENT_SECRET;
-PORT = 5173
-REDIRECT_URI = process.env.REDIRECT_URI;
+
 SCOPE = [
     "playlist-read-collaborative",
     "playlist-read-private",
@@ -148,7 +145,6 @@ app.get('/addLikedSongs', async (req, res) => {
         for (song of allLiked) {
             songSet.add(song);
         }
-        console.log("Liked songs added to set successfully.")
         res.sendStatus(200); // Sending a success response
     } catch (error) {
         console.error('Error adding liked songs:', error);
@@ -163,7 +159,6 @@ app.get('/fetchPlaylists', async (req, res) => {
         let offset = 0;
         let allplaylists = [];
         let playlists = null;
-        console.log("Here in the api...")
         do {
             const result = await fetch(`https://api.spotify.com/v1/me/playlists?limit=${limit}&offset=${offset}`, {
                 method: 'GET',
@@ -242,7 +237,6 @@ app.post('/findPlaylistsToShuffle', async (req, res) => {
 app.post('/getSizeOfPlaylist', async (req, res) => {
     try {
         const {num} = req.body; 
-        console.log(num);
         if (shufflePlaylist != null) {
             const accessToken = req.cookies.access_token;
             const limit = 50;
@@ -272,7 +266,6 @@ app.post('/getSizeOfPlaylist', async (req, res) => {
 })
 // Fisher-Yates algorithm to randomize array 
 async function randomizePlaylist(array, token, num) {
-    console.log("Randomizing");
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
@@ -281,7 +274,6 @@ async function randomizePlaylist(array, token, num) {
 }
 
 async function addSongsToQueue(array, token, num) {
-    console.log(array);
     try {
         let max = 0; 
         if(num>array.length){
@@ -291,7 +283,6 @@ async function addSongsToQueue(array, token, num) {
         }
         for (let i = 0; i < max; i++) {
             let uri = array[i];
-            console.log(uri);
             let result = await fetch(`https://api.spotify.com/v1/me/player/queue?uri=${uri}`, {
                 method: 'POST',
                 headers: {
@@ -299,7 +290,14 @@ async function addSongsToQueue(array, token, num) {
                     'Content-Type': 'application/json',
                 }
             });
-            console.log("success")
+
+            if (result.status === 404) {
+                console.log(`Track not found in Spotify catalog: ${uri}`);
+            } else if (result.ok) {
+                console.log(`Successfully added ${uri} to queue`);
+            } else {
+                console.log(`Error adding ${uri} to queue. Status: ${result.status}`);
+            }
         }
     } catch (error) {
         console.error("Error adding to queue", error);

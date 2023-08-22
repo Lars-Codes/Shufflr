@@ -79,7 +79,6 @@ async function shuffleSongs() {
     if (exists == 0 || exists == null) {
         message(0);
         message(2); 
-        message(7); 
         message(5);
     } else {
         message(1);
@@ -104,20 +103,20 @@ function message(code) {
             document.getElementById("loading").innerHTML = "";
             break;
         case 3:
-            document.getElementById("processing").innerText = "Finding playlist..."
+            document.getElementById("reload").innerText = "Finding playlist..."
             break;
         case 4:
-            document.getElementById("processing").innerText = "Randomizing items... This might take a moment...";
+            document.getElementById("reload").innerText = "Randomizing items... This might take a moment...";
             break;
         case 5:
             const toast = `<img width = 200px src ="./images/toasted.gif">`
             document.getElementById("loading").innerHTML = toast;
             break;
         case 6:
-            document.getElementById("processing").innerText = "Items added to queue!";
+            document.getElementById("reload").innerText = "Items added to queue!";
             break;
         case 7: 
-            document.getElementById("processing").innerText = ""
+            document.getElementById("reload").innerText = ""
             break;
     }
 }

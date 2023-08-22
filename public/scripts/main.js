@@ -189,15 +189,15 @@ function message(code) {
             document.getElementById("status").innerText = "Whoops, looks like we can't find your All Songs playlist! Maybe you changed the name or deleted it? In any case, please create a new playlist to proceed.";
             break;
         case 10:
-            const imageHTML = `<img src = "./images/toaster.gif">`;
+            const imageHTML = `<img class = "picture" src = "./images/toaster.gif">`;
             document.getElementById("loading").innerHTML = imageHTML;
             break;
         case 11:
-            const toast = `<img width = 200px src ="./images/toasted.gif">`
+            const toast = `<img class = "picture" src ="./images/toasted.gif">`
             document.getElementById("loading").innerHTML = toast;
             break;
         case 12:
-            document.getElementById("reload").innerText = "Playlist in transit. Please do not reload this page. Doing so may result in an incomplete playlist. If this happens, please click the Update Preexisting Playlist button."
+            document.getElementById("reload").innerText = "Click on the umbrella to keep dry while you wait. Please do not reload this page. Doing so may result in an incomplete playlist. If this happens, please click the Update Preexisting Playlist button."
             break;
         case 13:
             document.getElementById("reload").innerText = "";
@@ -207,3 +207,5 @@ function message(code) {
             break;
     }
 }
+
+

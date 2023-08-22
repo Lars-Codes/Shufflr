@@ -1,0 +1,349 @@
+@import url('https://fonts.googleapis.com/css2?family=Barriecito&family=Bricolage+Grotesque:opsz,wght@10..48,300&family=Dancing+Script&family=Josefin+Sans:wght@400;700&family=Josefin+Slab:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@500&family=Nunito&family=Spectral:wght@300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Poppins:wght@300&family=Rampart+One&display=swap');
+body {
+    background: #F3FFE1;
+}
+
+.topbar {
+    text-shadow: 1px 1px #6f00ff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    color: #8e37ff;
+    padding: 1%;
+    padding-left: 10%;
+    padding-right: 10%;
+    font-family: 'Nunito', sans-serif;
+    font-size: 200%;
+    position: relative;
+}
+
+nav {
+    position: relative;
+    position: fixed;
+    margin-top: 0%;
+    text-align: right;
+    font-family: 'Nunito', sans-serif;
+    font-size: 100%;
+    position: relative;
+}
+
+nav a {
+    margin: 1%;
+    color: #8e37ff;
+    text-decoration: none;
+    text-shadow: 1px 1px 0px #6f01ff;
+}
+
+nav a:hover {
+    color: #2274A5;
+}
+
+.privacy {
+    margin-right: 10%;
+}
+
+/* Title box styling */
+.indexcontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3%;
+    overflow: hidden;
+    position: relative;
+
+}
+
+.indexbox {
+    display: flex;
+    align-items: center;
+}
+
+.indextitle {
+
+    font-family: 'Poppins', sans-serif;
+    font-size: 130px;
+    color: #770fff;
+    margin: 0;
+    z-index: 1;
+
+}
+
+.indexabout{
+    font-size: 40px; 
+}
+
+@media (max-width: 1100px) {
+    .indextitle {
+      font-size: 120px; 
+      /* margin-top: 15px;  */
+    }
+
+    .textimage{
+        max-width: 80px;
+        height: auto;
+        margin-right: 10px;
+    }
+
+    .indexabout{
+        font-size: 45px; 
+        margin-top: 0;
+    }
+  }
+
+
+  @media (max-width: 800px) {
+    .indextitle {
+      font-size: 100px; 
+      /* margin-top: 20px;  */
+    }
+
+    .textimage{
+        max-width: 60px;
+        height: auto;
+        margin-right: 10px;
+    }
+
+    .indexabout{
+        font-size: 40px; 
+    }
+  }
+
+
+  @media (max-width: 600px) {
+    .indextitle {
+      font-size: 70px; 
+      /* margin-top: 30px;  */
+    }
+
+    .textimage{
+        max-width: 40px;
+        height: auto;
+        margin-right: 10px;
+    }
+
+    .indexabout{
+        font-size: 40px; 
+    }
+  }
+
+.indexcontent {
+    text-align: center;
+}
+
+.indexcontent ul {
+    font-family: 'Spectral', serif;
+    margin-left: 20%;
+    margin-right: 20%;
+    text-align: left;
+    font-size: 25px; 
+}
+
+.indexcontent h1 {
+    text-align: center; 
+    font-family: 'Poppins', sans-serif;
+    color: #F3FFE1;
+    margin-top: 0; 
+    /* text-shadow: 2px 2px #8e37ff; */
+}
+
+.indexlist {
+    background: rgb(181, 124, 255);
+    /* background: linear-gradient(0deg, rgba(181, 124, 255, 1) 98%, rgba(243, 255, 225, 1) 100%); */
+    padding-top: 5%;
+}
+
+.indexlogin{
+    margin-left: 5%; 
+    margin-right: 5%; 
+    margin-top: 0px; 
+    font-size: 50px; 
+}
+
+.indexspotify{
+    margin-bottom: 10%; 
+    width: 60%; 
+}
+
+/* INDEX ABOUT PAGE STYLING */
+
+.abouttitle{
+    text-align: center; 
+    font-family: 'Poppins', sans-serif;
+    color: #F3FFE1;
+    /* text-shadow: 2px 2px #8e37ff; */
+    margin-top: 0; 
+    padding-top: 1%; 
+    font-size: 50px; 
+}
+
+.aboutinfo{
+    font-family: 'Spectral', serif;
+    background: rgb(181, 124, 255);
+    /* background: linear-gradient(0deg, rgba(181, 124, 255, 1) 98%, rgba(243, 255, 225, 1) 100%); */
+    padding-bottom: 10%; 
+    text-align: center; 
+}
+
+.aboutcontent{
+    margin-left: 5%; 
+    margin-right: 5%; 
+    font-size: 25px; 
+}
+
+.aboutcontent a{
+    text-decoration: none;
+    color: #F3FFE1; 
+    text-shadow: 1px 1px 1px #ff6860;
+}
+
+.aboutcontent a:hover{
+    text-decoration: none;
+    color: #ff6860; 
+}
+
+.btn-logout{
+    font-size: 20px; 
+    bottom: 0px; 
+}
+
+/* HOME */
+
+.displayname{
+    font-family: 'Nunito', sans-serif;
+    /* text-shadow: 5px 5px 3px #ff6860; */
+    font-size: 80px;
+    color: #770fff;
+    margin: 0;
+    z-index: 1;
+}
+
+.homecontainer{
+    font-family: 'Nunito', sans-serif;
+    background: rgb(181, 124, 255);
+    color: rgb(251, 248, 255); 
+    text-align: center; 
+    padding-bottom: 5%; 
+}
+
+.hometitle{
+    text-shadow: 2px 2px rgb(124, 23, 255);
+    font-size: 35px; 
+    padding-top: 2%;
+    margin-bottom: 0;
+}
+
+.playlist {
+    margin: 1%; 
+    font-family: 'Nunito', sans-serif;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #770fff;
+    color: #ffffff;
+    transition: background-color 0.3s ease;
+}
+
+.playlist:hover {
+    background-color: #f700ff;
+}
+
+.picture{
+    width: 100px; 
+}
+
+.status{
+    font-size: 25px; 
+    padding-top: 2%;
+    margin-bottom: 0;
+    margin-left: 10%; 
+    margin-right: 10%; 
+    color: rgba(0, 0, 0, 0.653);
+}
+
+.reload{
+    color: rgba(0, 0, 0, 0.653);
+    margin-left: 10%; 
+    margin-right: 10%; 
+}
+
+.bother{
+    color: rgba(0, 0, 0, 0.653);
+    margin-left: 10%; 
+    margin-right: 10%;  
+}
+
+.userInput{
+    margin: 2%; 
+    font-family: 'Nunito', sans-serif;
+    padding: 10px;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.userInput:focus{
+    border-color: #770fff;
+}
+
+.randomShuffler{
+    margin: 2%;
+    font-family: 'Nunito', sans-serif;
+    padding: 10px 20px;
+    font-size: 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #770fff;
+    color: #ffffff;
+    transition: background-color 0.3s ease;
+
+    box-shadow: 5px 5px 0px #44009e;
+}
+
+.randomShuffler:hover {
+    background-color: #ed4bf3;
+}
+.choose{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.backgroundchoose{
+    background-color: rgb(181, 124, 255);
+    padding: 5%; 
+}
+
+.btn-logout{
+    text-decoration: none;
+}
+
+.btn-logout:hover{
+    color: white;
+}
+
+.btn-logoutHome{
+    text-align: center;
+    display: block;
+    text-decoration: none;
+    font-size: 18px;
+    max-width: 150px; /* Set the maximum width you want */
+    margin: 0 auto; /* Center the button horizontally */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #1d0042;
+    margin-top: 2%; 
+}
+
+
+.btn-logoutHome:hover{
+    color: white;
+}
