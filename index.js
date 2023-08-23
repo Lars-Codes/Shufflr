@@ -12,7 +12,10 @@ app.use(express.json());
 app.use(cors())
 app.use(cookieParser());
 
-
+CLIENT_ID = process.env.CLIENT_ID;
+CLIENT_SECRET = process.env.CLIENT_SECRET;
+PORT = 5173
+REDIRECT_URI = process.env.REDIRECT_URI;
 SCOPE = [
     "playlist-read-collaborative",
     "playlist-read-private",
@@ -236,7 +239,7 @@ app.post('/findPlaylistsToShuffle', async (req, res) => {
 // Gets size of playlist 
 app.post('/getSizeOfPlaylist', async (req, res) => {
     try {
-        const {num} = req.body; 
+        const { num } = req.body;
         if (shufflePlaylist != null) {
             const accessToken = req.cookies.access_token;
             const limit = 50;
@@ -270,19 +273,15 @@ async function randomizePlaylist(array, token, num) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
-    await addSongsToQueue(array, token, num);
-}
 
-async function addSongsToQueue(array, token, num) {
     try {
-        let max = 0; 
-        if(num>array.length){
-            max = array.length; 
-        }else{
-            max = num; 
+        let max = 0;
+        if (num > array.length) {
+            max = array.length;
+        } else {
+            max = num;
         }
-        for (let i = 0; i < max; i++) {
-            let uri = array[i];
+        for (const uri of array.slice(0, max)) {
             let result = await fetch(`https://api.spotify.com/v1/me/player/queue?uri=${uri}`, {
                 method: 'POST',
                 headers: {
@@ -290,6 +289,7 @@ async function addSongsToQueue(array, token, num) {
                     'Content-Type': 'application/json',
                 }
             });
+            console.log(result);
 
             if (result.status === 404) {
                 console.log(`Track not found in Spotify catalog: ${uri}`);
@@ -298,13 +298,13 @@ async function addSongsToQueue(array, token, num) {
             } else {
                 console.log(`Error adding ${uri} to queue. Status: ${result.status}`);
             }
+
         }
     } catch (error) {
         console.error("Error adding to queue", error);
     }
+
 }
-
-
 
 let all_songs = null;
 app.get('/removePlaylist', async (req, res) => {

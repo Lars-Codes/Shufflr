@@ -68,7 +68,7 @@ async function removePlaylist() {
 async function displayProfile() {
     try {
         await fetchProfile();
-        document.getElementById("displayName").innerText = "Log in with Spotify on the Home Page to continue.";
+        document.getElementById("displayName").innerText = "Log out and log back in with Spotify on the Home Page to continue.";
         // Populate UI 
         if (profile.images[0]) {
             const profileImage = new Image(200, 200);
