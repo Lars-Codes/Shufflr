@@ -14,7 +14,7 @@ app.use(cookieParser());
 
 CLIENT_ID = process.env.CLIENT_ID;
 CLIENT_SECRET = process.env.CLIENT_SECRET;
-PORT = 5173
+PORT = process.env.PORT;
 REDIRECT_URI = process.env.REDIRECT_URI;
 SCOPE = [
     "playlist-read-collaborative",

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "author": "Lara Palombi",
   "license": "ISC",
@@ -23,5 +23,6 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
-  }
+  },
+  "engines":{ "node" : ">=4.3.2" } 
 }
