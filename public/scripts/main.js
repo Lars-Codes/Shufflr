@@ -33,7 +33,7 @@ async function fetchLikedSongs() {
 async function addToPlaylist() {
     try {
         console.log("Adding songs to playlist..")
-        let addSongsToPlaylist = await fetch('http://localhost:5173/addSongsToPlaylist', {
+        let addSongsToPlaylist = await fetch('/addSongsToPlaylist', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

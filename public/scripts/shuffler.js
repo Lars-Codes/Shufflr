@@ -29,7 +29,7 @@ displayProfile();
 
 async function locatePlaylist(playlistName) {
     try {
-        let result = await fetch('http://localhost:5173/findPlaylistsToShuffle', {
+        let result = await fetch('/findPlaylistsToShuffle', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
