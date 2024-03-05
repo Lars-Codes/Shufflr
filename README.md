@@ -44,28 +44,21 @@ That is when I decided to create Shufflr. I realized I could utilize Spotify's A
 ## Features
 
 ### User-Facing Features 
-
-#### 1. Create All-Songs Playlist 
+- Create All-Songs Playlist 
 Creates a new playlist with all of the songs from the albums in your library and your liked songs playlist.
-
-#### 2. Update All-Songs Playlist 
+- Update All-Songs Playlist 
 Update your preexisting all-songs playlist to reflect the most up-to-date version of your music library. 
-
-#### 3. Random Shuffle Tool 
+- Random Shuffle Tool 
 Add a given number of songs to your queue, randomly selected from a specified playlist. 
-
-#### 4. Custom loading game 
+- Custom loading game 
 Play with an umbrella on a rainy day while waiting for your playlist to load. 
 
 ### Backend Features 
 
-#### 1. OAuthorization with PKCE
-
-#### 2. Spotify API Integration 
-
-#### 3. Session management using cookies 
-
-#### 4. CORS Middleware 
+- OAuthorization with PKCE
+- Spotify API Integration 
+- Session management using cookies 
+- CORS Middleware 
 
 ## Getting Started
 
@@ -85,11 +78,30 @@ In order to create a local version of this app, you must create an account with 
 1. **Clone the Repository**: 
    Clone the Shufflr repository to your local machine using Git:
 ``` bash
-  git clone https://github.com/Lara-Codes/Workout-World.git
+  git clone https://github.com/Lara-Codes/Workout-World.git](https://github.com/Lara-Codes/Shufflr.git
 ```
 
+2. **Install dependencies**:
 
-### Installation
+``` bash
+  npm i 
+```
+
+4. **Environment Variables**:
+In the server directory, create a .env file and add the following lines:
+```plaintext
+CLIENT_ID=your_client_id
+CLIENT_SECRET=your_client_secret
+PORT=3000
+REDIRECT_URI=http://localhost:5173/callback
+```
+Your client ID and client secret can be found on your Spotify for Developers Application Dashboard. 
+
+5. **Run Application**:
+   Run the application with the following command, and navigate to localhost:5173 (or the port you are choosing to run the application on). 
+``` bash
+  npm run dev 
+```
 
 ## Contributing
 
