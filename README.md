@@ -107,6 +107,13 @@ Your client ID and client secret can be found on your Spotify for Developers App
 
 I welcome contributions from the community! Whether you're a developer, designer, tester, or documentation enthusiast, there are many ways to contribute to our project. Here's how you can get involved:
 
+### Code Contributions
+- Fork the repository.
+- Create a new branch for your feature or bug fix.
+- Make your changes and ensure the code follows our coding standards.
+- Test your changes thoroughly.
+- Submit a pull request with a clear description of your changes.
+
 ### Reporting Bugs
 
 If you encounter any bugs or issues while using our application, please let us know by [opening an issue](https://github.com/Lara-Codes/Shufflr/issues) on GitHub. Be sure to provide detailed steps to reproduce the issue and include any relevant screenshots or error messages.
