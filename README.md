@@ -65,13 +65,29 @@ Play with an umbrella on a rainy day while waiting for your playlist to load.
 
 #### 3. Session management using cookies 
 
+#### 4. CORS Middleware 
 
 ## Getting Started
 
 ### Prerequisites 
 
+You must have node.js and npm package manager installed on your machine. Installation instructions can be found [here]([URL](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)).
 
 ### Creating a Spotify Developer Account 
+In order to create a local version of this app, you must create an account with Spotify for Developers. You can do that [here]([URL](https://developer.spotify.com/)). Once you create an account, follow the instructions below: 
+
+1. Click on "create an app."
+2. Give your application a name and a description. You can leave the "website" field empty.
+3. The redirect URI should be http://localhost:5173/callback. If you want to use another port, you can change 5173 to your desired port number.
+
+### Installation
+
+1. **Clone the Repository**: 
+   Clone the Shufflr repository to your local machine using Git:
+``` bash
+  git clone https://github.com/Lara-Codes/Workout-World.git
+```
+
 
 ### Installation
 
