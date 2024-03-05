@@ -7,7 +7,7 @@
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
-  "author": "Lara Palombi",
+  "author": "Lars Palombi",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.4.0",
