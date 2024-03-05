@@ -43,7 +43,28 @@ That is when I decided to create Shufflr. I realized I could utilize Spotify's A
 
 ## Features
 
-### 1. 
+### User-Facing Features 
+
+#### 1. Create All-Songs Playlist 
+Creates a new playlist with all of the songs from the albums in your library and your liked songs playlist.
+
+#### 2. Update All-Songs Playlist 
+Update your preexisting all-songs playlist to reflect the most up-to-date version of your music library. 
+
+#### 3. Random Shuffle Tool 
+Add a given number of songs to your queue, randomly selected from a specified playlist. 
+
+#### 4. Custom loading game 
+Play with an umbrella on a rainy day while waiting for your playlist to load. 
+
+### Backend Features 
+
+#### 1. OAuthorization with PKCE
+
+#### 2. Spotify API Integration 
+
+#### 3. Session management using cookies 
+
 
 ## Getting Started
 
@@ -60,11 +81,11 @@ I welcome contributions from the community! Whether you're a developer, designer
 
 ### Reporting Bugs
 
-If you encounter any bugs or issues while using our application, please let us know by [opening an issue]([https://github.com/Lara-Codes/Shufflr/issues])) on GitHub. Be sure to provide detailed steps to reproduce the issue and include any relevant screenshots or error messages.
+If you encounter any bugs or issues while using our application, please let us know by [opening an issue](https://github.com/Lara-Codes/Shufflr/issues) on GitHub. Be sure to provide detailed steps to reproduce the issue and include any relevant screenshots or error messages.
 
 ### Suggesting Enhancements
 
-Have an idea for a new feature or improvement? I'd love to hear it! [Open an issue]([https://github.com/Lara-Codes/Shufflr/issues]))) on GitHub and share your thoughts. I'm always looking for ways to make my applications better, and your feedback is invaluable.
+Have an idea for a new feature or improvement? I'd love to hear it! [Open an issue](https://github.com/Lara-Codes/Shufflr/issues) on GitHub and share your thoughts. I'm always looking for ways to make my applications better, and your feedback is invaluable.
 
 
 ## License
