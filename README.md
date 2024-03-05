@@ -60,11 +60,11 @@ I welcome contributions from the community! Whether you're a developer, designer
 
 ### Reporting Bugs
 
-If you encounter any bugs or issues while using our application, please let us know by [opening an issue]([])) on GitHub. Be sure to provide detailed steps to reproduce the issue and include any relevant screenshots or error messages.
+If you encounter any bugs or issues while using our application, please let us know by [opening an issue]([https://github.com/Lara-Codes/Shufflr/issues])) on GitHub. Be sure to provide detailed steps to reproduce the issue and include any relevant screenshots or error messages.
 
 ### Suggesting Enhancements
 
-Have an idea for a new feature or improvement? I'd love to hear it! [Open an issue]([]))) on GitHub and share your thoughts. I'm always looking for ways to make my applications better, and your feedback is invaluable.
+Have an idea for a new feature or improvement? I'd love to hear it! [Open an issue]([https://github.com/Lara-Codes/Shufflr/issues]))) on GitHub and share your thoughts. I'm always looking for ways to make my applications better, and your feedback is invaluable.
 
 
 ## License
