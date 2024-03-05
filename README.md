@@ -1,7 +1,7 @@
 
 # Shufflr
 <p align="center">
-  <img src="/shufflr.png" alt="Shufflr Logo" width="400">
+  <img src="/shufflr.png" alt="Shufflr Logo" width="500">
 </p>
 
 Welcome to Shufflr!
