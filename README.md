@@ -4,10 +4,18 @@
   <img src="/shufflr.png" alt="Shufflr Logo" width="500">
 </p>
 
-Welcome to Shufflr!
+Welcome to Shufflr! Have you ever wanted to search for a song in your library on Spotify, but forgot the name of the album it is on? Have you ever wanted to shuffle through all of the tunes in your albums, liked songs, and playlists but struggle to keep track of a "master album?" Have you ever been bugged by the bias in Spotify's shuffle tool, and wanted a truly random shuffle experience? Well, then Shufflr is the Spotify application for you! Whether you're a casual listener or a stereophile, Shufflr is guaranteed to enhance your music library experience. 
 
 ### Stack
-
+- Vanilla JavaScript
+- HTML/CSS
+- Node.js
+- Express.js
+- Spotify Web API
+- OAuth
+- CORS middleware
+- Cookie parsing
+- Processing.js
 
 ## Table of Contents
 
